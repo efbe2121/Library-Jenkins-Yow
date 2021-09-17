@@ -1,4 +1,4 @@
-def call(){
+def call(Map param){
 
     pipeline {
         agent {
@@ -7,7 +7,7 @@ def call(){
         stages {
 		    stage('HelloWorld') {
 			    steps {
-			    	helloworld("${text}")
+			    	helloworld("${param.text}")
 			    }
 		    }
 	    }
@@ -15,6 +15,6 @@ def call(){
 
 }
 
-def helloworld(Map param){
+def helloworld(text){
 	echo text
 }
