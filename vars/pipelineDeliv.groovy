@@ -4,10 +4,10 @@
 def call(Map param){
 	pipeline {
 		agent {
-			label "workers"
+			label "vmmm"
 		}
 		stages {
-			stage ("telegram notif"){
+			stage ("Notification Building"){
 				steps{
 					echo "${getMessage()} ${param.text}"
 				}
@@ -28,7 +28,6 @@ def call(Map param){
 				}
 			}
 		}
-
     }
 }
 
