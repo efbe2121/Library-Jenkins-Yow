@@ -7,43 +7,44 @@ def call(Map param){
 			label "${param.agents}"
 		}
 		stages {
-			stage ("Notification Building"){
-				steps{
-					echo "${getMessage()} ${param.text}"
-				}
-			}
-			stage('Build') {
-				steps {
-					sh 'mvn -B -DskipTests clean package'
-				}
-			}
-			stage('Test') {
-				steps {
-					sh 'mvn test'
-				}
-				post {
-					always {
-						junit 'target/surefire-reports/*.xml'
-					}
-				}
-			}
-			stage('Verify') {
+        	stage('Build') {
+            	steps {
+            	    sh 'mvn -B -DskipTests clean package'
+            	}
+        	}
+       		stage('Test') {
+            	steps {
+                	sh 'mvn test'
+            	}
+            	post {
+                	always {
+                    	junit 'target/surefire-reports/*.xml'
+                	}
+            	}
+        	}
+        	stage('Build image') {
 				when {
-					expressions {param.agents == "container"}
+					expressions {param.agents == "container" }
 				}
-				steps{
-					echo "This is ${param.text}"
-				}
-			}
-			stage('Verify2') {
+            	steps {
+                	sh 'docker build -t my-app .'
+            	}
+        	}
+        	stage('Run app') {
 				when {
-					expressions {param.agents == "vmmm"}
+					expressions {param.agents == "container" }
 				}
-				steps {
-					echo "${param.text}"
+            	steps {
+                	sh 'docker run -p 8000:8181 my-app'
+            	}
+        	}
+			stage('Run app2') {
+				when {
+					expressions {param.agents == "vmmm" }
 				}
+				sh 'java -jar my-app.jar'
 			}
-		}
+    	}
     }
 }
 
