@@ -3,21 +3,32 @@
 
 def call(Map param){
 	pipeline {
-		agent {
-			label "vmmm"
-		}
+		agent none
+
 		stages {
 			stage ("Notification Building"){
+				agent {
+					label 'vmmm'
+					label 'container'
+				}
 				steps{
 					echo "${getMessage()} ${param.text}"
 				}
 			}
 			stage('Build') {
+				agent {
+					label 'vmmm'
+					label 'container'
+				}
 				steps {
 					sh 'mvn -B -DskipTests clean package'
 				}
 			}
 			stage('Test') {
+				agent {
+					label 'vmmm'
+					label 'container'
+				}
 				steps {
 					sh 'mvn test'
 				}
@@ -27,7 +38,28 @@ def call(Map param){
 					}
 				}
 			}
-		}
+        	stage('Build image') {
+				agent {
+					label 'container'
+				}
+            	steps {
+                	sh 'docker build -t my-app .'
+            	}
+        	}
+        	stage('Run app') {
+				agent {
+					label 'container'
+				}
+            	steps {
+                	sh 'docker run -p 8000:8181 my-app'
+            	}
+       	 	}
+    	}
+    	post {
+        	always {
+            	deleteDir()
+        	}
+    	}
     }
 }
 
