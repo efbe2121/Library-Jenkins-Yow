@@ -43,7 +43,7 @@ def call(Map param){
 					expression { param.agents == "vmmm" }
 				}
 				steps{
-					sh 'java -jar my-app.jar'
+					sh 'java -jar target/*.jar'
 				}
 			}
     	}
