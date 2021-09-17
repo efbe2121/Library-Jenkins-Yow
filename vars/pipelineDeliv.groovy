@@ -24,7 +24,7 @@ def call(Map param){
         	}
         	stage('Build image') {
 				when {
-					expressions {param.agents == "container" }
+					expression { param.agents == "container" }
 				}
             	steps {
                 	sh 'docker build -t my-app .'
@@ -32,7 +32,7 @@ def call(Map param){
         	}
         	stage('Run app') {
 				when {
-					expressions {param.agents == "container" }
+					expression { param.agents == "container" }
 				}
             	steps {
                 	sh 'docker run -p 8000:8181 my-app'
@@ -40,7 +40,7 @@ def call(Map param){
         	}
 			stage('Run app2') {
 				when {
-					expressions {param.agents == "vmmm" }
+					expression { param.agents == "vmmm" }
 				}
 				sh 'java -jar my-app.jar'
 			}
