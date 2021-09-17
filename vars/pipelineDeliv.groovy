@@ -4,12 +4,10 @@
 def call(Map param){
 	pipeline {
 		agent none
-
 		stages {
 			stage ("Notification Building"){
 				agent {
 					label 'vmmm'
-					label 'container'
 				}
 				steps{
 					echo "${getMessage()} ${param.text}"
@@ -18,7 +16,6 @@ def call(Map param){
 			stage('Build') {
 				agent {
 					label 'vmmm'
-					label 'container'
 				}
 				steps {
 					sh 'mvn -B -DskipTests clean package'
@@ -27,7 +24,6 @@ def call(Map param){
 			stage('Test') {
 				agent {
 					label 'vmmm'
-					label 'container'
 				}
 				steps {
 					sh 'mvn test'
@@ -38,20 +34,20 @@ def call(Map param){
 					}
 				}
 			}
-        	stage('Build image') {
+        	stage('') {
 				agent {
-					label 'container'
+					docker { image 'node:14-alpine' }
 				}
             	steps {
-                	sh 'docker build -t my-app .'
+                	echo "${getMessage()} ${param.text}"
             	}
         	}
         	stage('Run app') {
 				agent {
-					label 'container'
+					docker { image 'node:14-alpine' }
 				}
             	steps {
-                	sh 'docker run -p 8000:8181 my-app'
+                	sh 'node --version'
             	}
        	 	}
     	}
