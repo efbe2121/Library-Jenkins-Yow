@@ -3,28 +3,21 @@
 
 def call(Map param){
 	pipeline {
-		agent none
+		agent {
+			label "${param.agents}"
+		}
 		stages {
 			stage ("Notification Building"){
-				agent {
-					label 'vmmm'
-				}
 				steps{
 					echo "${getMessage()} ${param.text}"
 				}
 			}
 			stage('Build') {
-				agent {
-					label 'vmmm'
-				}
 				steps {
 					sh 'mvn -B -DskipTests clean package'
 				}
 			}
 			stage('Test') {
-				agent {
-					label 'vmmm'
-				}
 				steps {
 					sh 'mvn test'
 				}
@@ -34,28 +27,23 @@ def call(Map param){
 					}
 				}
 			}
-        	stage('') {
-				agent {
-					docker { image 'node:14-alpine' }
+			stage('Verify') {
+				when {
+					expressions {param.agents == "container"}
 				}
-            	steps {
-                	echo "${getMessage()} ${param.text}"
-            	}
-        	}
-        	stage('Run app') {
-				agent {
-					docker { image 'node:14-alpine' }
+				steps{
+					echo "This is ${param.text}"
 				}
-            	steps {
-                	sh 'node --version'
-            	}
-       	 	}
-    	}
-    	post {
-        	always {
-            	deleteDir()
-        	}
-    	}
+			}
+			stage('Verify2') {
+				when {
+					expressions {param.agents == "vmmm"}
+				}
+				steps {
+					echo "${param.text}"
+				}
+			}
+		}
     }
 }
 
