@@ -42,7 +42,9 @@ def call(Map param){
 				when {
 					expression { param.agents == "vmmm" }
 				}
-				sh 'java -jar my-app.jar'
+				steps{
+					sh 'java -jar my-app.jar'
+				}
 			}
     	}
     }
